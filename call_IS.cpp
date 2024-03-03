@@ -12,7 +12,7 @@ int main() {
     RFormatInstruction rFormatInstruction;
 
     // Example usage
-    string instructionLine = "div x5,x5,x6";
+    string instructionLine = "add x5,x6,x9";
     string machineCode = rFormatInstruction.generateMachineCode(instructionLine);
     cout << "Machine Code: " << machineCode << endl;
 
