@@ -356,3 +356,77 @@ string IInstructionFormat::generateMachineCode(string Instructionline){
 
     return "";
 }
+
+
+SInstruction::SInstruction(){
+    
+}
+
+string SInstruction::generateMachineCode(string Instructionline){
+    string instruction_name;
+    int pos = 0;
+    while(Instructionline[pos]==' '){
+        pos++;
+    }
+
+    while(Instructionline[pos]!= ' '){
+        instruction_name += Instructionline[pos];
+        pos++;
+    }
+
+    
+    string opcode = getOpcode(instruction_name);
+    string funct3 = getFunct3(instruction_name);
+    
+    string rs1;
+
+    while(Instructionline[pos] != ','){
+        if(Instructionline[pos]!= ' ')
+            rs1 += Instructionline[pos];
+
+        pos++;
+    }
+
+    int intrs1 = registerMap.at(rs1);
+
+    string rs1Binary =  bitset<5>(intrs1).to_string();
+
+    string final = "";
+
+    pos++;
+
+    int immediate = 0;
+    while(Instructionline[pos] != '('){
+        if(Instructionline[pos] != ' '){
+            immediate *= 10;
+            immediate += Instructionline[pos] - 48;
+        }
+
+        pos++;
+    }
+
+    string immediate_ = bitset<12>(immediate).to_string();
+
+    pos++;
+
+    string rd;
+    while(Instructionline[pos] != ')'){
+        if(Instructionline[pos] != ' '){
+            rd += Instructionline[pos];
+        }
+        pos++;
+    }
+
+    int intrs2 = registerMap.at(rd);
+    
+    string rs2Binary = bitset<5>(intrs2).to_string();
+
+    string immediate_1 = immediate_.substr(0,7);
+
+    string immediate_2 = immediate_.substr(7,13);
+
+    final = immediate_1 + rs1Binary + rs2Binary + funct3 + immediate_2 + opcode;
+
+    return final; 
+    
+};
