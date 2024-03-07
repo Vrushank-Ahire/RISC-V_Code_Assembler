@@ -1,6 +1,6 @@
 #include "InstructionSet.h"
-using namespace std;
 #include <bits/stdc++.h>
+using namespace std;
 #include <unordered_map>
 #include <bitset>
 
@@ -168,7 +168,7 @@ string InstructionSet::getFormat(string instruction) {
     string instruction_name = instruction.substr(0, pos);
 
     auto it = instructionFormats.find(instruction_name);
-    return it->second;
+    return (it != instructionFormats.end()) ? it->second : "";
 }
 
 string InstructionSet::getOpcode(const  string& instruction) {
