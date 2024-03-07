@@ -1,11 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include"call_IS.cpp"
 
 using namespace std;
 
+
 int main()
 {
+    
+    program_zero();
     ifstream inputFile("input.asm"); // Open the input file
     if (!inputFile.is_open())
     {
@@ -38,11 +42,25 @@ int main()
                 {
                     part1 = part1.substr(part1_pos);
                 }
-                cout << part1 << endl;
-
-                // Print the part after ":"
+                string line2;
+                for(int i = 0; i<colon_pos; i++){
+                    
+                  //  cout<<"*";
+                    if(line[i] == ' ' || i==colon_pos-1){
+                       // cout<<"#";
+                       if(i == colon_pos - 1){
+                        line2 += line[i];
+                       }
+                        line2 += ':';
+                        break;
+                    }
+                    line2 += line[i];
+                }
+                
+              //  cout<<line2<<endl   ;
+                
                 string part2 = line.substr(colon_pos + 1);
-                // Remove leading whitespace from part2
+                
                 size_t part2_pos = part2.find_first_not_of(" \t");
                 if (part2_pos != string::npos)
                 {
@@ -52,12 +70,12 @@ int main()
                 {
 
                     string instruction;
-                    bool firstSpace = true; // Flag to track if the first space is encountered
+                    bool firstSpace = true; 
                     for (char c : part2)
                     {
                         if (c == ' ')
                         {
-                            // Only add the space if it's the first space encountered
+                            
                             if (firstSpace)
                             {
                                 instruction += c;
@@ -70,9 +88,9 @@ int main()
                         }
                     }
 
-                    part2 = instruction;
+                   // part2 = instruction;
 
-                    cout << part2 << endl;
+                  //  cout << part2 << endl;
                 }
             }
             else
@@ -99,13 +117,17 @@ int main()
                             instruction += c;
                         }
                     }
-                    cout << instruction << endl;
+                  //  cout << instruction << endl;
+                    final_machinecode(instruction);
                 }
                 else
                 {
                     // Print the line if it's not an instruction
+                    
+                  //  cout << line << endl;
+                   // final_machinecode(line);
 
-                    cout << line << endl;
+                    
                 }
             }
         }
