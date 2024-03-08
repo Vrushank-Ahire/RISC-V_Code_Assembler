@@ -530,7 +530,7 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
                     {
                         enterflag = 1;
                         integer=1;
-                        for (int j = i; j < size; i++)
+                        for (int j = i; j < size; j++)
                         {
                             if (Instructionline[j] != ' ')
                             {
