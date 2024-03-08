@@ -4,6 +4,60 @@ using namespace std;
 #include <unordered_map>
 #include <bitset>
 
+vector <pair<string, int>> labels;
+
+void add_pair(pair<string, int> temp){
+    labels.push_back(temp);
+}
+
+string comp(int temp_immediate){
+
+    cout<<endl<<temp_immediate<<endl;
+
+    string temp = bitset<12>(temp_immediate).to_string();
+    cout<<temp<<endl;
+    for(int i = 0; i<12; i++){
+        if(temp[i] == '0'){
+            temp[i] = '1';
+        }
+
+        else if(temp[i] == '1'){
+            temp[i] = '0';
+        }
+    }
+    char to_carry = '1';
+    for(int i = 11; i>=0; i--){
+        if(to_carry == '1' && temp[i] == '1'){
+            temp[i] = '0';
+        }
+
+        else if((to_carry == '1' && temp[i] == '0') || (to_carry == '0' && temp[i] == '1')){
+            temp[i] = '1';
+            to_carry = '0';
+        }
+
+        else{
+            temp[i] = '0';
+            to_carry = '0';
+        }
+    }
+    
+   // cout<<temp<<endl;
+    return temp;
+}
+
+int find_prog_count(string input){
+    int size = labels.size();
+    for(int i = 0; i<size; i++){
+       // cout<<labels[i].second<<endl;
+       // cout<<labels[i].first<<endl;
+        if(input == labels[i].first){
+         //   cout<<"The returned value is "<<labels[i].second<<endl;
+            return labels[i].second;
+        }
+    }
+}
+
 InstructionSet::InstructionSet() {
     // Initialize instruction set
     instructionFormats = {
@@ -429,13 +483,124 @@ string SInstruction::generateMachineCode(string Instructionline){
 
     return final; 
     
-
 };
+
+SBInstruction::SBInstruction(){
+    
+}
+
+string SBInstruction::generateMachineCode(string Instructionline, int prog_counter){
+    string instruction_name;
+    int pos = 0;
+    while(Instructionline[pos]==' '){
+        pos++;
+    }
+
+    while(Instructionline[pos]!= ' '){
+        instruction_name += Instructionline[pos];
+        pos++;
+    }
+
+    
+    string opcode = getOpcode(instruction_name);
+    string funct3 = getFunct3(instruction_name);
+
+
+    
+    string rs1;
+
+    while(Instructionline[pos] != ','){
+        if(Instructionline[pos]!= ' ')
+            rs1 += Instructionline[pos];
+
+        pos++;
+    }
+
+    int intrs1 = registerMap.at(rs1);
+
+    string rs1Binary =  bitset<5>(intrs1).to_string();
+
+    string final = "";
+
+    pos++;
+
+    string rs2;
+
+    while(Instructionline[pos] != ','){
+        if(Instructionline[pos]!= ' ')
+            rs2 += Instructionline[pos];
+
+        pos++;
+    }
+
+    int intrs2 = registerMap.at(rs2);
+
+    string rs2Binary =  bitset<5>(intrs2).to_string();
+
+    pos++;
+
+    int size = Instructionline.length();
+    int work = 0;
+
+    string temp_label;
+    while(pos<size){
+        if(Instructionline[pos] == ' ' && work == 0){
+            continue;
+        }
+        
+        else if(Instructionline[pos] == ' ' && work == 1){
+            break;
+        }
+        work = 1;
+        temp_label += Instructionline[pos];
+        pos++;
+    }
+
+   // cout<<temp_label<<endl;
+
+    int to_jump = find_prog_count(temp_label);
+    int immediate = to_jump - prog_counter;
+
+  //  cout<<immediate<<"= added"<<endl;
+    
+    string part1, part2;
+    if(immediate<0)
+    {
+        // int temp_immediate = -1*immediate;
+        // string imm = comp(temp_immediate);
+       // immediate++;
+       immediate = -1 * immediate - 1;
+       //cout<<immediate;
+        int temp_imm = ~immediate + 1;
+       // cout<<"TEMP IMM"<<temp_imm;
+        bitset<12> offset(temp_imm) ;
+        string imm = offset.to_string() ;
+        part1 = imm.substr(0,7);
+        part2 = imm.substr(7);
+    }
+    else
+    {
+        bitset<12> offset(immediate) ;
+        string imm = offset.to_string() ;
+        part1 = imm.substr(0,7);
+        part2 = imm.substr(7);
+    }
+
+    
+
+
+    final = part1 + rs2Binary + rs1Binary + funct3 + part2 + opcode;
+
+    return final; 
+    
+};
+
+
 
 UInstruction::UInstruction()
 {
 }
-string UInstructionFormat::generateMachineCode(string Instructionline)
+string UInstruction::generateMachineCode(string Instructionline)
 {
 
     string instruction_name;
@@ -451,9 +616,9 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
         pos++;
     }
 
-    // cout<<instruction_name;
+    //cout<<instruction_name;
     string opcode = getOpcode(instruction_name);
-
+   // cout<<opcode;
     if (instruction_name == "auipc" || instruction_name == "lui")
     {
         string rs1;
@@ -468,7 +633,7 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
         }
 
         int intrs1 = registerMap.at(rs1);
-        // cout<<intrs1;
+        //cout<<intrs1;
 
         string rs1Binary = bitset<5>(intrs1).to_string();
         // cout<<rs1Binary;
@@ -520,14 +685,16 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
                         bin = 1;
                         bin_size = 0;
                     }
-                    if (Instructionline[i + 1] == 'x')
+                    else if (Instructionline[i + 1] == 'x')
                     {
+                      //  cout<<"ENTERED THIS";
                         enterflag = 1;
                         hex = 1;
                         hex_size = 0;
                     }
                     else
                     {
+                        
                         enterflag = 1;
                         integer=1;
                         for (int j = i; j < size; j++)
@@ -549,7 +716,7 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
                     {
                         if (bin_size == 0)
                         {
-                            i = i + 1;
+                            i = i + 2;
                             if_bin += Instructionline[i];
                             bin_size += 1;
                         }
@@ -566,7 +733,8 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
                     {
                         if (hex_size == 0)
                         {
-                            i = i + 1;
+                            i = i + 2;
+                            
                             if_hex+=hexMap.at(Instructionline[i]);
                             hex_size+=1;
                         }
@@ -579,11 +747,13 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
                             }
                         }
                     }
-
+                    
                 }
                 
             }
         }
+
+
         string final="";
         if(bin==1)
         {
@@ -591,34 +761,35 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
             {
                 for(int i=20-bin_size;i>=1;i--)
                 {
-                    if_bin+='0';
+                    if_bin='0'+if_bin;
                 }
-                final=if_bin;
-    
-        }
+                
+            }
+            final=if_bin;
+        }  
         if(hex==1)
         {
             if(hex_size<5)
             {
                 for(int i=5-hex_size;i>=1;i--)
                 {
-                    if_hex+="0000";
-                }
-                final=if_hex;
+                    if_hex="0000"+if_hex;
+                  //  cout<<"*";
+
+                }  
             }
+            final=if_hex;
+            
         }
         if(integer==1)
         {
             final=if_int;
         }
 
-    
-
+     //   cout<<"*";
+        
         string final_x = final+ rs1Binary + opcode;
 
-        return final;
+        return final_x;
     }
     }
-
-   
-};

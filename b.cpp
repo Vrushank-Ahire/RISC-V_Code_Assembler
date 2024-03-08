@@ -1,2 +1,0 @@
-DataSegment::DataSegment(){}
-string DataSegment::
