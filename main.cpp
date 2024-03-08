@@ -5,10 +5,14 @@
 
 using namespace std;
 
+queue<string> inst;
+int program_temp;
+
+
 
 int main()
 {
-    
+    program_temp = 0;
     program_zero();
     ifstream inputFile("input.asm"); // Open the input file
     if (!inputFile.is_open())
@@ -18,10 +22,10 @@ int main()
     }
 
     string line;
-    // Read each line from the file
+
     while (getline(inputFile, line))
     {
-        // Remove leading whitespace
+
         size_t pos = line.find_first_not_of(" \t");
         if (pos != string::npos)
         {
@@ -30,13 +34,13 @@ int main()
 
         if (!line.empty())
         {
-            // Find the position of ":"
+
             size_t colon_pos = line.find(':');
             if (colon_pos != string::npos)
             {
-                // Print the part before ":"
+
                 string part1 = line.substr(0, colon_pos);
-                // Remove leading whitespace from part1
+
                 size_t part1_pos = part1.find_first_not_of(" \t");
                 if (part1_pos != string::npos)
                 {
@@ -45,20 +49,24 @@ int main()
                 string line2;
                 for(int i = 0; i<colon_pos; i++){
                     
-                  //  cout<<"*";
                     if(line[i] == ' ' || i==colon_pos-1){
-                       // cout<<"#";
-                       if(i == colon_pos - 1){
+                       if(i == colon_pos - 1 && line[i]!=' '){
                         line2 += line[i];
                        }
-                        line2 += ':';
+                    
                         break;
                     }
                     line2 += line[i];
                 }
                 
-              //  cout<<line2<<endl   ;
                 
+                pair<string, int> temp;
+                temp.first = line2;
+                temp.second = program_temp;
+
+                add_pair(temp);
+                line2 += ':';
+
                 string part2 = line.substr(colon_pos + 1);
                 
                 size_t part2_pos = part2.find_first_not_of(" \t");
@@ -87,10 +95,14 @@ int main()
                             instruction += c;
                         }
                     }
+                    if(instruction[0]!=' '){
+                      //  cout<<"Pushed 1"<<instruction<<endl;
+                        program_temp += 4;
+                        inst.push(instruction);
+                    }
+                   
 
-                   // part2 = instruction;
 
-                  //  cout << part2 << endl;
                 }
             }
             else
@@ -118,21 +130,28 @@ int main()
                         }
                     }
                   //  cout << instruction << endl;
-                    final_machinecode(instruction);
+                    if(instruction[0]!='.'){
+                       // cout<<"Pushed"<<instruction<<endl;
+                        program_temp += 4;
+                        inst.push(instruction);
+                    }      
                 }
                 else
                 {
-                    // Print the line if it's not an instruction
-                    
-                  //  cout << line << endl;
-                   // final_machinecode(line);
-
                     
                 }
             }
         }
     }
 
-    inputFile.close(); // Close the input file
+    int size = inst.size();
+
+    for(int i = 0; i<size; i++){
+        string k = inst.front();
+        //cout<<"Instruction is"<<k<<endl;
+        inst.pop();
+        final_machinecode(k);
+    }
+    inputFile.close();
     return 0;
 }
