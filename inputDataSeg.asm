@@ -1,4 +1,10 @@
+.text
+addi x1, x2, 10
+add x3, x4, x5
 
+.data
+variable1: .word 123
+variable2: .byte 'a', 'b', 'c', 'd', 'e'
 string2: .asciiz "This is a test"
 
 .text

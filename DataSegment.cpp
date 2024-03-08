@@ -15,14 +15,34 @@ void processAsciiz(const string& line, map<string, int>& data_mp, ofstream& outp
 
     // Write address and ASCII values to the output file
     for (char c : data) {
-        outputFile << "Address: " << address << ", Character: " << c << ", ASCII: " << static_cast<int>(c) << endl;
+        outputFile << "Address: " << data_ptr << ", Value: " << static_cast<int>(c) << endl;
         data_ptr++;
         address++;
     }
 
     // Store null terminator to mark end of the string
-    outputFile << "Address: " << address << ", Character: \\0, ASCII: 0" << endl;
+    outputFile << "Address: " << address << ", Value: 0" << endl;
     data_ptr++;
+}
+
+// Function to process .byte instruction
+void processByte(const string& line, map<string, int>& data_mp, ofstream& outputFile) {
+    string label = line.substr(0, line.find(":")); // Extract label
+    string line2 = line.substr(line.find(':') + 1,line.size()-1);
+    string dataStr = line2.substr(line2.find_first_of("1234567890")); // Extract data part of the line
+
+    // Tokenize the data string based on commas
+    stringstream ss(dataStr);
+    string token;
+    while (getline(ss, token, ',')) {
+        // Convert token to integer
+        int value = stoi(token);
+
+        // Store value in memory
+        outputFile << "Address: " << data_ptr << ", Value: " << value << endl;
+        data_mp[label] = data_ptr;
+        data_ptr++;
+    }
 }
 
 int main() {
@@ -62,6 +82,9 @@ int main() {
 
             if (line.find(".asciiz") != string::npos) {
                 processAsciiz(line, data_mp, outputFile); // Pass outputFile object to the function
+            }
+            else if (line.find(".byte") != string::npos) {
+                processByte(line, data_mp, outputFile); // Call processByte function
             }
 
             data_mp[label] = data_ptr;
