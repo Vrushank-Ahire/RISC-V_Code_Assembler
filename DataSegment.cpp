@@ -85,6 +85,25 @@ void processWord(const string& line, map<string, int>& data_mp, ofstream& output
     }
 }
 
+// Function to process .word instruction
+void processDword(const string& line, map<string, int>& data_mp, ofstream& outputFile) {
+    string label = line.substr(0, line.find(":")); // Extract label
+    string line2 = line.substr(line.find(':') + 1,line.size()-1);
+    string dataStr = line2.substr(line2.find_first_of("1234567890")); // Extract data part of the line
+
+    // Tokenize the data string based on commas
+    stringstream ss(dataStr);
+    string token;
+    while (getline(ss, token, ',')) {
+        // Convert token to integer
+        int value = stoi(token);
+
+        // Store value in memory
+        outputFile << "Address: " << data_ptr << ", Value: " << value << endl;
+        data_mp[label] = data_ptr;
+        data_ptr += 8; // Assuming 8 bytes per double word
+    }
+}
 
 int main() {
     string filename = "inputDataSeg.asm";
@@ -134,6 +153,9 @@ int main() {
             }
             else if (line.find(".word") != string::npos) {
                 processWord(line, data_mp, outputFile); // Call processWord function
+            }
+            else if (line.find(".dword") != string::npos) {
+                processDword(line, data_mp, outputFile); // Call processDword function
             }
 
             data_mp[label] = data_ptr;
