@@ -429,4 +429,196 @@ string SInstruction::generateMachineCode(string Instructionline){
 
     return final; 
     
+
+};
+
+UInstruction::UInstruction()
+{
+}
+string UInstructionFormat::generateMachineCode(string Instructionline)
+{
+
+    string instruction_name;
+    int pos = 0;
+    while (Instructionline[pos] == ' ')
+    {
+        pos++;
+    }
+
+    while (Instructionline[pos] != ' ')
+    {
+        instruction_name += Instructionline[pos];
+        pos++;
+    }
+
+    // cout<<instruction_name;
+    string opcode = getOpcode(instruction_name);
+
+    if (instruction_name == "auipc" || instruction_name == "lui")
+    {
+        string rs1;
+
+        while (Instructionline[pos] != ',')
+        {
+
+            if (Instructionline[pos] != ' ')
+                rs1 += Instructionline[pos];
+
+            pos++;
+        }
+
+        int intrs1 = registerMap.at(rs1);
+        // cout<<intrs1;
+
+        string rs1Binary = bitset<5>(intrs1).to_string();
+        // cout<<rs1Binary;
+
+        int size = Instructionline.size();
+        int immediate = 0;
+        int enterflag = 0;
+        int bin = 0;
+        int bin_size = 0;
+        int hex = 0;
+        int hex_size = 0;
+        int integer = 0;
+        string if_bin = "";
+        string if_hex = "";
+        string if_int="";
+        unordered_map<char, int> hexMap = {
+            {'0', "0000"},
+            {'1', "0001"},
+            {'2', "0010"},
+            {'3', "0011"},
+            {'4', "0100"},
+            {'5', "0101"},
+            {'6', "0110"},
+            {'7', "0111"},
+            {'8', "1000"},
+            {'9', "1001"},
+            {'A', "1010"},
+            {'B', "1011"},
+            {'C', "1100"},
+            {'D', "1101"},
+            {'E', "1110"},
+            {'F', "1111"},
+            {'a', "1010"},
+            {'b', "1011"},
+            {'c', "1100"},
+            {'d', "1101"},
+            {'e', "1110"},
+            {'f', "1111"}
+            };
+        for (int i = pos + 1; i < size; i++)
+        {
+            if (Instructionline[i] != ' ')
+            {
+                if (enterflag == 0)
+                {
+                    if (Instructionline[i + 1] == 'b')
+                    {
+                        enterflag = 1;
+                        bin = 1;
+                        bin_size = 0;
+                    }
+                    if (Instructionline[i + 1] == 'x')
+                    {
+                        enterflag = 1;
+                        hex = 1;
+                        hex_size = 0;
+                    }
+                    else
+                    {
+                        enterflag = 1;
+                        integer=1;
+                        for (int j = i; j < size; i++)
+                        {
+                            if (Instructionline[j] != ' ')
+                            {
+                                immediate *= 10;
+                                immediate += Instructionline[j] - 48;
+                            }
+                        }
+                         if_int = bitset<20>(immediate).to_string();
+
+                        break;
+                    }
+                }
+                if (enterflag == 1)
+                {
+                    if (bin == 1)
+                    {
+                        if (bin_size == 0)
+                        {
+                            i = i + 1;
+                            if_bin += Instructionline[i];
+                            bin_size += 1;
+                        }
+                        else
+                        {
+                            if (bin_size <= 20)
+                            {
+                                if_bin += Instructionline[i];
+                                bin_size += 1;
+                            }
+                        }
+                    }
+                    else if(hex==1)
+                    {
+                        if (hex_size == 0)
+                        {
+                            i = i + 1;
+                            if_hex+=hexMap.at(Instructionline[i]);
+                            hex_size+=1;
+                        }
+                        else
+                        {
+                            if (hex_size <= 5)
+                            {
+                                if_hex+=hexMap.at(Instructionline[i]);
+                                hex_size+=1;
+                            }
+                        }
+                    }
+
+                }
+                
+            }
+        }
+        string final="";
+        if(bin==1)
+        {
+            if(bin_size<20)
+            {
+                for(int i=20-bin_size;i>=1;i--)
+                {
+                    if_bin+='0';
+                }
+                final=if_bin;
+    
+        }
+        if(hex==1)
+        {
+            if(hex_size<5)
+            {
+                for(int i=5-hex_size;i>=1;i--)
+                {
+                    if_hex+="0000";
+                }
+                final=if_hex;
+            }
+        }
+        if(integer==1)
+        {
+            final=if_int;
+        }
+
+    
+
+        string final_x = final+ rs1Binary + opcode;
+
+        return final;
+    }
+    }
+
+   
 };
