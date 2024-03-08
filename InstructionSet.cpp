@@ -484,7 +484,7 @@ string UInstructionFormat::generateMachineCode(string Instructionline)
         string if_bin = "";
         string if_hex = "";
         string if_int="";
-        unordered_map<char, int> hexMap = {
+        unordered_map<char,string> hexMap = {
             {'0', "0000"},
             {'1', "0001"},
             {'2', "0010"},
