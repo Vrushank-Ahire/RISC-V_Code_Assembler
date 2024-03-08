@@ -45,6 +45,26 @@ void processByte(const string& line, map<string, int>& data_mp, ofstream& output
     }
 }
 
+// Function to process .half instruction
+void processHalf(const string& line, map<string, int>& data_mp, ofstream& outputFile) {
+    string label = line.substr(0, line.find(":")); // Extract label
+    string line2 = line.substr(line.find(':') + 1,line.size()-1);
+    string dataStr = line2.substr(line2.find_first_of("1234567890")); // Extract data part of the line
+
+    // Tokenize the data string based on commas
+    stringstream ss(dataStr);
+    string token;
+    while (getline(ss, token, ',')) {
+        // Convert token to integer
+        int value = stoi(token);
+
+        // Store value in memory
+        outputFile << "Address: " << data_ptr << ", Value: " << value << endl;
+        data_mp[label] = data_ptr;
+        data_ptr += 2; // Assuming 2 bytes per half-word
+    }
+}
+
 int main() {
     string filename = "inputDataSeg.asm";
     ifstream inputFile(filename);
@@ -69,9 +89,11 @@ int main() {
         if (found_data != string::npos) {
             flag = 1;
             continue;
-        } else if (found_text != string::npos) {
+        } 
+        else if (found_text != string::npos) {
             flag = 0;
         }
+        
 
         // All the functions are called in the below part
         if (flag == 1) {
@@ -85,6 +107,9 @@ int main() {
             }
             else if (line.find(".byte") != string::npos) {
                 processByte(line, data_mp, outputFile); // Call processByte function
+            }
+            else if (line.find(".half") != string::npos) {
+                processHalf(line, data_mp, outputFile); // Call processHalf function
             }
 
             data_mp[label] = data_ptr;
