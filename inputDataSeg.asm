@@ -1,77 +1,75 @@
 .text
-addi x1, x2, 10
-add x3, x4, x5
+add x2, x3, x4
+andi x5, x6, 10
+or x7, x8, x9
+sll x10, x11, x3
+slt x12, x13, x14
+sra x15, x16, x2
+srl x17, x18, x4
+sub x19, x20, x21
+xor x22, x23, x24
+mul x25, x26, x27
+div x28, x29, x30
+rem x31, x1, x2
 
 .data
 variable1: .word 123
-variable2: .byte 'a', 'b', 'c', 'd', 'e'
 string2: .asciiz "This is a test"
 
+.text
+
+label1:
+label2:
+label3:
+sb x2, 8(x3)
+sw x4, 4(x5)
+sd x6, 0(x7)
+sh x8, 12(x9)
+
+.text
+beq x10, x11, label1
+bne x12, x13, label2
+bge x14, x15, label3
+blt x16, x17, label4
+
+.text
+auipc x18, 0x1000
+lui x19, 0x2000
+jal x20, label5
+
 .data
-array1: .word 10, 20, 30, 40, 50
+array1: .half 10, 20, 30, 40, 50
 string1: .asciiz "Hello, World!"
-array2: .byte 1, 2, 3, 4, 5
+array2: .byte 1, 2, 3, 4, 5, '1'
+variable4: .byte 'a', 'b', 'c', 1, 2, 3
 
 .text
-sub x6, x7, x8
-slt x9, x10, x11
-
-.text
-beq x12, x13, label1
-bne x14, x15, label2
-
-.text
-jal label3
-lw x16, 0(x17)
+lb x21, 16(x22)
+ld x23, 0(x24)
 
 .data
 array3: .half 100, 200, 300, 400, 500
 variable3: .word 999
 array4: .word 55, 66, 77, 88, 99
 
-.data
-string3: .asciiz "RISC-V Assembly"
-array5: .half 123, 456, 789
-variable4: .byte 'x', 'y', 'z'
-
 .text
-sw x18, 4(x19)
-lb x20, 8(x21)
-sb x22, 12(x23)
-
-
-
-
+sb x25, 4(x26)
+label4:
+lw x27, 8(x28)
 
 .data
-array6: .word 11, 22, 33, 44, 55
+array5: .word 11, 22, 33, 44, 55
 string4: .asciiz "Welcome to RISC-V"
 
 .text
-lbu x24, 16(x25)
-sbu x26, 20(x27)
-
-
+lui x29, 0x3000
+auipc x30, 0x4000
 
 .data
-array7: .byte 6, 7, 8, 9, 10
+array6: .byte 6, 7, 8, 9, 10
 variable5: .word 987
-array8: .half 333, 444, 555, 666, 777
+array7: .half 333, 444, 555, 666, 777
 
 .text
-lui x28, 0x1000
-auipc x29, 0x2000
-
-
-.data
-array9: .word 111, 222, 333, 444, 555
-string5: .asciiz "Programming is fun!"
-
-
-
-
-
-.text
-jalr x30, x31, 0
-jr x0
-j label4
+label5:
+jalr x31, 0(x1)
