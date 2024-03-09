@@ -4,61 +4,75 @@ using namespace std;
 #include <unordered_map>
 #include <bitset>
 
-vector <pair<string, int>> labels;
+vector<pair<string, int>> labels;
 
-void add_pair(pair<string, int> temp){
+void add_pair(pair<string, int> temp)
+{
     labels.push_back(temp);
 }
 
-string comp(int temp_immediate){
+string comp(int temp_immediate)
+{
 
-    cout<<endl<<temp_immediate<<endl;
+    cout << endl
+         << temp_immediate << endl;
 
     string temp = bitset<12>(temp_immediate).to_string();
-    cout<<temp<<endl;
-    for(int i = 0; i<12; i++){
-        if(temp[i] == '0'){
+    cout << temp << endl;
+    for (int i = 0; i < 12; i++)
+    {
+        if (temp[i] == '0')
+        {
             temp[i] = '1';
         }
 
-        else if(temp[i] == '1'){
+        else if (temp[i] == '1')
+        {
             temp[i] = '0';
         }
     }
     char to_carry = '1';
-    for(int i = 11; i>=0; i--){
-        if(to_carry == '1' && temp[i] == '1'){
+    for (int i = 11; i >= 0; i--)
+    {
+        if (to_carry == '1' && temp[i] == '1')
+        {
             temp[i] = '0';
         }
 
-        else if((to_carry == '1' && temp[i] == '0') || (to_carry == '0' && temp[i] == '1')){
+        else if ((to_carry == '1' && temp[i] == '0') || (to_carry == '0' && temp[i] == '1'))
+        {
             temp[i] = '1';
             to_carry = '0';
         }
 
-        else{
+        else
+        {
             temp[i] = '0';
             to_carry = '0';
         }
     }
-    
-   // cout<<temp<<endl;
+
+    // cout<<temp<<endl;
     return temp;
 }
 
-int find_prog_count(string input){
+int find_prog_count(string input)
+{
     int size = labels.size();
-    for(int i = 0; i<size; i++){
-       // cout<<labels[i].second<<endl;
-       // cout<<labels[i].first<<endl;
-        if(input == labels[i].first){
-         //   cout<<"The returned value is "<<labels[i].second<<endl;
+    for (int i = 0; i < size; i++)
+    {
+        // cout<<labels[i].second<<endl;
+        // cout<<labels[i].first<<endl;
+        if (input == labels[i].first)
+        {
+            //   cout<<"The returned value is "<<labels[i].second<<endl;
             return labels[i].second;
         }
     }
 }
 
-InstructionSet::InstructionSet() {
+InstructionSet::InstructionSet()
+{
     // Initialize instruction set
     instructionFormats = {
         {"add", "R"},
@@ -91,8 +105,7 @@ InstructionSet::InstructionSet() {
         {"blt", "SB"},
         {"auipc", "U"},
         {"lui", "U"},
-        {"jal", "UJ"}
-    };
+        {"jal", "UJ"}};
 
     // Initialize opcode map
     opcodeMap = {
@@ -126,8 +139,7 @@ InstructionSet::InstructionSet() {
         {"blt", "1100011"},
         {"auipc", "0010111"},
         {"lui", "0110111"},
-        {"jal", "1101111"}
-    };
+        {"jal", "1101111"}};
 
     // Initialize funct3 map
     funct3Map = {
@@ -161,8 +173,7 @@ InstructionSet::InstructionSet() {
         {"blt", "100"},
         {"auipc", "000"},
         {"lui", "000"},
-        {"jal", "000"}
-    };
+        {"jal", "000"}};
 
     // Initialize funct7 map
     funct7Map = {
@@ -177,8 +188,7 @@ InstructionSet::InstructionSet() {
         {"xor", "0000000"},
         {"mul", "0000001"},
         {"div", "0000001"},
-        {"rem", "0000001"}
-    };
+        {"rem", "0000001"}};
 
     // Initialize immediate map
     immediateMap = {
@@ -212,11 +222,11 @@ InstructionSet::InstructionSet() {
         {"blt", true},
         {"auipc", true},
         {"lui", true},
-        {"jal", true}
-    };
+        {"jal", true}};
 }
 
-string InstructionSet::getFormat(string instruction) {
+string InstructionSet::getFormat(string instruction)
+{
     int pos = instruction.find(' ');
 
     string instruction_name = instruction.substr(0, pos);
@@ -225,33 +235,38 @@ string InstructionSet::getFormat(string instruction) {
     return (it != instructionFormats.end()) ? it->second : "";
 }
 
-string InstructionSet::getOpcode(const  string& instruction) {
+string InstructionSet::getOpcode(const string &instruction)
+{
     auto it = opcodeMap.find(instruction);
     return (it != opcodeMap.end()) ? it->second : "";
 }
 
- string InstructionSet::getFunct3(const  string& instruction) {
+string InstructionSet::getFunct3(const string &instruction)
+{
     auto it = funct3Map.find(instruction);
     return (it != funct3Map.end()) ? it->second : "";
 }
 
- string InstructionSet::getFunct7(const  string& instruction) {
+string InstructionSet::getFunct7(const string &instruction)
+{
     auto it = funct7Map.find(instruction);
     return (it != funct7Map.end()) ? it->second : "";
 }
 
-bool InstructionSet::hasImmediate(const  string& instruction) {
+bool InstructionSet::hasImmediate(const string &instruction)
+{
     auto it = immediateMap.find(instruction);
     return (it != immediateMap.end()) ? it->second : false;
 }
 
-RFormatInstruction::RFormatInstruction() {
-
+RFormatInstruction::RFormatInstruction()
+{
 }
 
-string RFormatInstruction::generateMachineCode(const string& instructionLine) {
+string RFormatInstruction::generateMachineCode(const string &instructionLine)
+{
     // Extract the instruction name from the instruction line
-    size_t pos = instructionLine.find(' '); // Find the space after the instruction name
+    size_t pos = instructionLine.find(' ');                  // Find the space after the instruction name
     string instructionName = instructionLine.substr(0, pos); // Extract the instruction name
 
     // Dynamically extract opcode, funct3, and funct7 based on the instruction name
@@ -274,9 +289,9 @@ string RFormatInstruction::generateMachineCode(const string& instructionLine) {
     int rs2 = registerMap.at(rs2Name);
 
     // Convert register numbers to 5-bit binary representation
-    string rdBinary =   bitset<5>(rd).to_string();
-    string rs1Binary =  bitset<5>(rs1).to_string();
-    string rs2Binary =  bitset<5>(rs2).to_string();
+    string rdBinary = bitset<5>(rd).to_string();
+    string rs1Binary = bitset<5>(rs1).to_string();
+    string rs2Binary = bitset<5>(rs2).to_string();
 
     // Concatenate funct7, rs2, rs1, funct3, rd, opcode to form the machine code
     string machineCode = funct7 + rs2Binary + rs1Binary + funct3 + rdBinary + opcode;
@@ -284,70 +299,78 @@ string RFormatInstruction::generateMachineCode(const string& instructionLine) {
     return machineCode;
 }
 
-IInstructionFormat::IInstructionFormat(){
-    
+IInstructionFormat::IInstructionFormat()
+{
 }
 
-string IInstructionFormat::generateMachineCode(string Instructionline){
+string IInstructionFormat::generateMachineCode(string Instructionline)
+{
 
-    
     string instruction_name;
     int pos = 0;
-    while(Instructionline[pos]==' '){
+    while (Instructionline[pos] == ' ')
+    {
         pos++;
     }
 
-    while(Instructionline[pos]!= ' '){
+    while (Instructionline[pos] != ' ')
+    {
         instruction_name += Instructionline[pos];
         pos++;
     }
 
-   // cout<<instruction_name;
+    // cout<<instruction_name;
     string opcode = getOpcode(instruction_name);
     string funct3 = getFunct3(instruction_name);
 
-    if(instruction_name == "andi" || instruction_name == "ori" || instruction_name == "addi"){
+    if (instruction_name == "andi" || instruction_name == "ori" || instruction_name == "addi")
+    {
         string rs1;
 
-        while(Instructionline[pos] != ','){
-            
-            if(Instructionline[pos]!= ' ')
+        while (Instructionline[pos] != ',')
+        {
+
+            if (Instructionline[pos] != ' ')
                 rs1 += Instructionline[pos];
 
             pos++;
         }
 
         int intrs1 = registerMap.at(rs1);
-       // cout<<intrs1;
+        // cout<<intrs1;
 
-        string rs1Binary =  bitset<5>(intrs1).to_string();
-       // cout<<rs1Binary;
+        string rs1Binary = bitset<5>(intrs1).to_string();
+        // cout<<rs1Binary;
 
-       string rs2;
+        string rs2;
         pos++;
-        while(Instructionline[pos] != ','){    
-            if(Instructionline[pos]!= ' ')
+        while (Instructionline[pos] != ',')
+        {
+            if (Instructionline[pos] != ' ')
                 rs2 += Instructionline[pos];
-            
-          //  cout<<"*";
+
+            //  cout<<"*";
             pos++;
         }
 
         int intrs2 = registerMap.at(rs2);
-        string rs2Binary =  bitset<5>(intrs2).to_string();
+        string rs2Binary = bitset<5>(intrs2).to_string();
 
         int size = Instructionline.size();
         int immediate = 0;
         int k = 1;
-        for(int i = pos+1; i<size; i++){
-            if(Instructionline[i] != ' '){
+        for (int i = pos + 1; i < size; i++)
+        {
+            if (Instructionline[i] != ' ')
+            {
                 immediate *= 10;
                 immediate += Instructionline[i] - 48;
-                k=0;
+                k = 0;
                 continue;
             }
 
-            if(k == 0){
+            if (k == 0)
+            {
                 break;
             }
         }
@@ -356,15 +379,17 @@ string IInstructionFormat::generateMachineCode(string Instructionline){
 
         string final = immediate_ + rs2Binary + funct3 + rs1Binary + opcode;
 
-        return final; 
+        return final;
     }
 
-    if(instruction_name == "lb" || instruction_name == "ld" || instruction_name == "lh" || instruction_name == "lw" || instruction_name == "jalr"){
+    if (instruction_name == "lb" || instruction_name == "ld" || instruction_name == "lh" || instruction_name == "lw" || instruction_name == "jalr")
+    {
         string rs1;
 
-        while(Instructionline[pos] != ','){
-            
-            if(Instructionline[pos]!= ' ')
+        while (Instructionline[pos] != ',')
+        {
+
+            if (Instructionline[pos] != ' ')
                 rs1 += Instructionline[pos];
 
             pos++;
@@ -372,15 +397,17 @@ string IInstructionFormat::generateMachineCode(string Instructionline){
 
         int intrs1 = registerMap.at(rs1);
 
-        string rs1Binary =  bitset<5>(intrs1).to_string();
+        string rs1Binary = bitset<5>(intrs1).to_string();
 
         string final = "";
 
         pos++;
 
         int immediate = 0;
-        while(Instructionline[pos] != '('){
-            if(Instructionline[pos] != ' '){
+        while (Instructionline[pos] != '(')
+        {
+            if (Instructionline[pos] != ' ')
+            {
                 immediate *= 10;
                 immediate += Instructionline[pos] - 48;
             }
@@ -393,8 +420,10 @@ string IInstructionFormat::generateMachineCode(string Instructionline){
         pos++;
 
         string rd;
-        while(Instructionline[pos] != ')'){
-            if(Instructionline[pos] != ' '){
+        while (Instructionline[pos] != ')')
+        {
+            if (Instructionline[pos] != ' ')
+            {
                 rd += Instructionline[pos];
             }
             pos++;
@@ -405,37 +434,39 @@ string IInstructionFormat::generateMachineCode(string Instructionline){
         string rs2Binary = bitset<5>(intrs2).to_string();
 
         final = immediate_ + rs2Binary + funct3 + rs1Binary + opcode;
-        return final; 
+        return final;
     }
 
     return "";
 }
 
-
-SInstruction::SInstruction(){
-    
+SInstruction::SInstruction()
+{
 }
 
-string SInstruction::generateMachineCode(string Instructionline){
+string SInstruction::generateMachineCode(string Instructionline)
+{
     string instruction_name;
     int pos = 0;
-    while(Instructionline[pos]==' '){
+    while (Instructionline[pos] == ' ')
+    {
         pos++;
     }
 
-    while(Instructionline[pos]!= ' '){
+    while (Instructionline[pos] != ' ')
+    {
         instruction_name += Instructionline[pos];
         pos++;
     }
 
-    
     string opcode = getOpcode(instruction_name);
     string funct3 = getFunct3(instruction_name);
-    
+
     string rs1;
 
-    while(Instructionline[pos] != ','){
-        if(Instructionline[pos]!= ' ')
+    while (Instructionline[pos] != ',')
+    {
+        if (Instructionline[pos] != ' ')
             rs1 += Instructionline[pos];
 
         pos++;
@@ -443,15 +474,17 @@ string SInstruction::generateMachineCode(string Instructionline){
 
     int intrs1 = registerMap.at(rs1);
 
-    string rs1Binary =  bitset<5>(intrs1).to_string();
+    string rs1Binary = bitset<5>(intrs1).to_string();
 
     string final = "";
 
     pos++;
 
     int immediate = 0;
-    while(Instructionline[pos] != '('){
-        if(Instructionline[pos] != ' '){
+    while (Instructionline[pos] != '(')
+    {
+        if (Instructionline[pos] != ' ')
+        {
             immediate *= 10;
             immediate += Instructionline[pos] - 48;
         }
@@ -464,53 +497,55 @@ string SInstruction::generateMachineCode(string Instructionline){
     pos++;
 
     string rd;
-    while(Instructionline[pos] != ')'){
-        if(Instructionline[pos] != ' '){
+    while (Instructionline[pos] != ')')
+    {
+        if (Instructionline[pos] != ' ')
+        {
             rd += Instructionline[pos];
         }
         pos++;
     }
 
     int intrs2 = registerMap.at(rd);
-    
+
     string rs2Binary = bitset<5>(intrs2).to_string();
 
-    string immediate_1 = immediate_.substr(0,7);
+    string immediate_1 = immediate_.substr(0, 7);
 
-    string immediate_2 = immediate_.substr(7,13);
+    string immediate_2 = immediate_.substr(7, 13);
 
     final = immediate_1 + rs1Binary + rs2Binary + funct3 + immediate_2 + opcode;
 
-    return final; 
-    
+    return final;
 };
 
-SBInstruction::SBInstruction(){
-    
+SBInstruction::SBInstruction()
+{
 }
 
-string SBInstruction::generateMachineCode(string Instructionline, int prog_counter){
+string SBInstruction::generateMachineCode(string Instructionline, int prog_counter)
+{
     string instruction_name;
     int pos = 0;
-    while(Instructionline[pos]==' '){
+    while (Instructionline[pos] == ' ')
+    {
         pos++;
     }
 
-    while(Instructionline[pos]!= ' '){
+    while (Instructionline[pos] != ' ')
+    {
         instruction_name += Instructionline[pos];
         pos++;
     }
 
-    
     string opcode = getOpcode(instruction_name);
     string funct3 = getFunct3(instruction_name);
 
-
-    
     string rs1;
 
-    while(Instructionline[pos] != ','){
-        if(Instructionline[pos]!= ' ')
+    while (Instructionline[pos] != ',')
+    {
+        if (Instructionline[pos] != ' ')
             rs1 += Instructionline[pos];
 
         pos++;
@@ -518,7 +553,7 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
 
     int intrs1 = registerMap.at(rs1);
 
-    string rs1Binary =  bitset<5>(intrs1).to_string();
+    string rs1Binary = bitset<5>(intrs1).to_string();
 
     string final = "";
 
@@ -526,8 +561,9 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
 
     string rs2;
 
-    while(Instructionline[pos] != ','){
-        if(Instructionline[pos]!= ' ')
+    while (Instructionline[pos] != ',')
+    {
+        if (Instructionline[pos] != ' ')
             rs2 += Instructionline[pos];
 
         pos++;
@@ -535,7 +571,7 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
 
     int intrs2 = registerMap.at(rs2);
 
-    string rs2Binary =  bitset<5>(intrs2).to_string();
+    string rs2Binary = bitset<5>(intrs2).to_string();
 
     pos++;
 
@@ -543,12 +579,15 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
     int work = 0;
 
     string temp_label;
-    while(pos<size){
-        if(Instructionline[pos] == ' ' && work == 0){
+    while (pos < size)
+    {
+        if (Instructionline[pos] == ' ' && work == 0)
+        {
             continue;
         }
-        
-        else if(Instructionline[pos] == ' ' && work == 1){
+
+        else if (Instructionline[pos] == ' ' && work == 1)
+        {
             break;
         }
         work = 1;
@@ -556,46 +595,40 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
         pos++;
     }
 
-   // cout<<temp_label<<endl;
+    // cout<<temp_label<<endl;
 
     int to_jump = find_prog_count(temp_label);
     int immediate = to_jump - prog_counter;
 
-  //  cout<<immediate<<"= added"<<endl;
-    
+    //  cout<<immediate<<"= added"<<endl;
+
     string part1, part2;
-    if(immediate<0)
+    if (immediate < 0)
     {
         // int temp_immediate = -1*immediate;
         // string imm = comp(temp_immediate);
-       // immediate++;
-       immediate = -1 * immediate - 1;
-       //cout<<immediate;
+        // immediate++;
+        immediate = -1 * immediate - 1;
+        // cout<<immediate;
         int temp_imm = ~immediate + 1;
-       // cout<<"TEMP IMM"<<temp_imm;
-        bitset<12> offset(temp_imm) ;
-        string imm = offset.to_string() ;
-        part1 = imm.substr(0,7);
+        // cout<<"TEMP IMM"<<temp_imm;
+        bitset<12> offset(temp_imm);
+        string imm = offset.to_string();
+        part1 = imm.substr(0, 7);
         part2 = imm.substr(7);
     }
     else
     {
-        bitset<12> offset(immediate) ;
-        string imm = offset.to_string() ;
-        part1 = imm.substr(0,7);
+        bitset<12> offset(immediate);
+        string imm = offset.to_string();
+        part1 = imm.substr(0, 7);
         part2 = imm.substr(7);
     }
 
-    
-
-
     final = part1 + rs2Binary + rs1Binary + funct3 + part2 + opcode;
 
-    return final; 
-    
+    return final;
 };
-
-
 
 UInstruction::UInstruction()
 {
@@ -616,9 +649,9 @@ string UInstruction::generateMachineCode(string Instructionline)
         pos++;
     }
 
-    //cout<<instruction_name;
+    // cout<<instruction_name;
     string opcode = getOpcode(instruction_name);
-   // cout<<opcode;
+    // cout<<opcode;
     if (instruction_name == "auipc" || instruction_name == "lui")
     {
         string rs1;
@@ -633,7 +666,7 @@ string UInstruction::generateMachineCode(string Instructionline)
         }
 
         int intrs1 = registerMap.at(rs1);
-        //cout<<intrs1;
+        // cout<<intrs1;
 
         string rs1Binary = bitset<5>(intrs1).to_string();
         // cout<<rs1Binary;
@@ -648,8 +681,8 @@ string UInstruction::generateMachineCode(string Instructionline)
         int integer = 0;
         string if_bin = "";
         string if_hex = "";
-        string if_int="";
-        unordered_map<char,string> hexMap = {
+        string if_int = "";
+        unordered_map<char, string> hexMap = {
             {'0', "0000"},
             {'1', "0001"},
             {'2', "0010"},
@@ -671,8 +704,7 @@ string UInstruction::generateMachineCode(string Instructionline)
             {'c', "1100"},
             {'d', "1101"},
             {'e', "1110"},
-            {'f', "1111"}
-            };
+            {'f', "1111"}};
         for (int i = pos + 1; i < size; i++)
         {
             if (Instructionline[i] != ' ')
@@ -687,16 +719,16 @@ string UInstruction::generateMachineCode(string Instructionline)
                     }
                     else if (Instructionline[i + 1] == 'x')
                     {
-                      //  cout<<"ENTERED THIS";
+                        //  cout<<"ENTERED THIS";
                         enterflag = 1;
                         hex = 1;
                         hex_size = 0;
                     }
                     else
                     {
-                        
+
                         enterflag = 1;
-                        integer=1;
+                        integer = 1;
                         for (int j = i; j < size; j++)
                         {
                             if (Instructionline[j] != ' ')
@@ -705,7 +737,7 @@ string UInstruction::generateMachineCode(string Instructionline)
                                 immediate += Instructionline[j] - 48;
                             }
                         }
-                         if_int = bitset<20>(immediate).to_string();
+                        if_int = bitset<20>(immediate).to_string();
 
                         break;
                     }
@@ -729,67 +761,61 @@ string UInstruction::generateMachineCode(string Instructionline)
                             }
                         }
                     }
-                    else if(hex==1)
+                    else if (hex == 1)
                     {
                         if (hex_size == 0)
                         {
                             i = i + 2;
-                            
-                            if_hex+=hexMap.at(Instructionline[i]);
-                            hex_size+=1;
+
+                            if_hex += hexMap.at(Instructionline[i]);
+                            hex_size += 1;
                         }
                         else
                         {
                             if (hex_size <= 5)
                             {
-                                if_hex+=hexMap.at(Instructionline[i]);
-                                hex_size+=1;
+                                if_hex += hexMap.at(Instructionline[i]);
+                                hex_size += 1;
                             }
                         }
                     }
-                    
                 }
-                
             }
         }
 
-
-        string final="";
-        if(bin==1)
+        string final = "";
+        if (bin == 1)
         {
-            if(bin_size<20)
+            if (bin_size < 20)
             {
-                for(int i=20-bin_size;i>=1;i--)
+                for (int i = 20 - bin_size; i >= 1; i--)
                 {
-                    if_bin='0'+if_bin;
+                    if_bin = '0' + if_bin;
                 }
-                
             }
-            final=if_bin;
-        }  
-        if(hex==1)
+            final = if_bin;
+        }
+        if (hex == 1)
         {
-            if(hex_size<5)
+            if (hex_size < 5)
             {
-                for(int i=5-hex_size;i>=1;i--)
+                for (int i = 5 - hex_size; i >= 1; i--)
                 {
-                    if_hex="0000"+if_hex;
-                  //  cout<<"*";
-
-                }  
+                    if_hex = "0000" + if_hex;
+                    //  cout<<"*";
+                }
             }
-            final=if_hex;
-            
+            final = if_hex;
         }
-        if(integer==1)
+        if (integer == 1)
         {
-            final=if_int;
+            final = if_int;
         }
 
-     //   cout<<"*";
-        
-        string final_x = final+ rs1Binary + opcode;
+        //   cout<<"*";
+
+        string final_x = final + rs1Binary + opcode;
 
         return final_x;
     }
-    }
+}
