@@ -5,6 +5,7 @@
 #include <iostream>
 #include "InstructionSet.cpp"
 using namespace std;
+#include "output.mc"
 
 int program_counter;
 
@@ -43,6 +44,7 @@ string program_hex()
 string to_hex(string input)
 {
     string final;
+
     // outputFile<<input<<endl;
     for (int i = 0; i < 32; i++)
     {
@@ -82,6 +84,7 @@ int get_program()
 string final_machinecode(string line)
 {
     // outputFile<<line<<endl;
+    cout<<line<<endl;
     ofstream outputFile("outputDataSeg.txt", std::ios::app);
     if (line[0] == '.')
     {
@@ -97,9 +100,17 @@ string final_machinecode(string line)
     UJInstruction ujinstruction;
 
     string instructionLine = line;
-
+    string format;
     // outputFile<<"Instruction = "<<instructionLine<<endl;
-    string format = instructionSet.getFormat(instructionLine);
+    try {
+        format = instructionSet.getFormat(instructionLine);
+        if(format == "ERROR")
+            throw runtime_error("Wrong Format");
+    } catch(const runtime_error& e) {  
+        cerr << "Error: Invalid Instruction entered." << endl;
+        exit(1);
+    }
+    
 
     // outputFile<<"FORMAT = "<<format<<endl;
     string machineCode;
