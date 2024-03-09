@@ -13,7 +13,9 @@ int big_flag;
 
 int main()
 {
-    string file_name = "input.asm";
+    ofstream outputFile("outputDataSeg.txt", std::ios::app);
+    outputFile<<"TEXT SEGMENT"<<endl;
+    string file_name = "inputDataSeg.asm";
     big_flag = 0;
     program_temp = 0;
     program_zero();
@@ -115,8 +117,10 @@ int main()
             {
                 // Check if it's an instruction line
                 bool isInstruction = (line.find('#') == string::npos);
+                
                 if (isInstruction)
                 {
+              
                     string instruction;
                     bool firstSpace = true; // Flag to track if the first space is encountered
                     for (char c : line)
@@ -135,7 +139,7 @@ int main()
                             instruction += c;
                         }
                     }
-                    // cout << instruction << endl;
+                    //cout << instruction << endl;
                     if (instruction[0] != '.')
                     {
                         // cout<<"Pushed"<<instruction<<endl;
@@ -148,6 +152,12 @@ int main()
                 }
                 else
                 {
+                    cout<<line;
+                    if(line[0] != '.'){
+                        
+                        outputFile<<"Invalid Instruction";
+                        exit(1);
+                    }
                 }
             }
         }
