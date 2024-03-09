@@ -112,7 +112,6 @@ void processHalf(const string &line, map<string, int> &data_mp, ofstream &output
     string line2 = line.substr(line.find(':') + 1, line.size() - 1);
     string dataStr = line2.substr(line2.find_first_of("1234567890")); // Extract data part of the line
 
-    // Tokenize the data string based on commas
     stringstream ss(dataStr);
     string token;
     while (getline(ss, token, ','))
