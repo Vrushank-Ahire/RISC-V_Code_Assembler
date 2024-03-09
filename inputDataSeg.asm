@@ -7,27 +7,27 @@ variable1: .word 123
 variable2: .byte 'a', 'b', 'c', 'd', 'e'
 string2: .asciiz "This is a test"
 
-.text
-sub x6, x7, x8
-slt x9, x10, x11
-
 .data
 array1: .word 10, 20, 30, 40, 50
 string1: .asciiz "Hello, World!"
 array2: .byte 1, 2, 3, 4, 5
 
 .text
+sub x6, x7, x8
+slt x9, x10, x11
+
+.text
 beq x12, x13, label1
 bne x14, x15, label2
+
+.text
+jal label3
+lw x16, 0(x17)
 
 .data
 array3: .half 100, 200, 300, 400, 500
 variable3: .word 999
 array4: .word 55, 66, 77, 88, 99
-
-.text
-jal label3
-lw x16, 0(x17)
 
 .data
 string3: .asciiz "RISC-V Assembly"
