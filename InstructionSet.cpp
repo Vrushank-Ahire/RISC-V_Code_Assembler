@@ -1,8 +1,9 @@
-#include "InstructionSet.h"
 #include <bits/stdc++.h>
-using namespace std;
+
+#include "InstructionSet.h"
 #include <unordered_map>
 #include <bitset>
+using namespace std;
 
 vector<pair<string, int>> labels;
 
@@ -105,7 +106,8 @@ InstructionSet::InstructionSet()
         {"blt", "SB"},
         {"auipc", "U"},
         {"lui", "U"},
-        {"jal", "UJ"}};
+        {"jal", "UJ"},
+        {"j", "UJ"}};
 
     // Initialize opcode map
     opcodeMap = {
@@ -139,7 +141,8 @@ InstructionSet::InstructionSet()
         {"blt", "1100011"},
         {"auipc", "0010111"},
         {"lui", "0110111"},
-        {"jal", "1101111"}};
+        {"jal", "1101111"},
+        {"j", "1101111"}};
 
     // Initialize funct3 map
     funct3Map = {
@@ -633,9 +636,9 @@ string SBInstruction::generateMachineCode(string Instructionline, int prog_count
 UInstruction::UInstruction()
 {
 }
+
 string UInstruction::generateMachineCode(string Instructionline)
 {
-
     string instruction_name;
     int pos = 0;
     while (Instructionline[pos] == ' ')
@@ -818,4 +821,112 @@ string UInstruction::generateMachineCode(string Instructionline)
 
         return final_x;
     }
+}
+
+UJInstruction::UJInstruction()
+{
+}
+
+string UJInstruction::generateMachineCode(string Instructionline, int prog_counter)
+{
+    // cout << "UJ selected" << endl;
+    int pos = 0;
+
+    while (Instructionline[pos] == ' ')
+    {
+        pos++;
+    }
+
+    string inst = "";
+
+    while (Instructionline[pos] != ' ')
+    {
+        inst += Instructionline[pos];
+        pos++;
+    }
+
+    string opcode = getOpcode(inst);
+
+    // cout<<opcode<<endl;
+
+    // cout << inst << endl;
+
+    if (inst == "jal")
+    {
+        string rs1 = "";
+
+        while (Instructionline[pos] != ',')
+        {
+            if (Instructionline[pos] != ' ')
+            {
+                rs1 += Instructionline[pos];
+            }
+            pos++;
+        }
+        // cout<<rs1.length()<<endl;
+        // cout<<rs1<<endl;
+        int intrs1 = registerMap.at(rs1);
+
+        string rs1binary = bitset<5>(intrs1).to_string();
+
+        // cout<<intrs1<<endl<<rs1binary<<endl;
+
+        pos++;
+        string temp_label;
+        for (int i = pos; i < Instructionline.length(); i++)
+        {
+            if (Instructionline[i] != ' ')
+            {
+                temp_label += Instructionline[i];
+            }
+        }
+
+        // cout<<temp_label<<endl;
+        int to_jump = find_prog_count(temp_label);
+        int immediate = to_jump - prog_counter;
+        // cout << immediate << endl;
+        char p, bit20;
+        string part1, part2;
+        if (immediate < 0)
+        {
+
+            immediate = -1 * immediate - 1;
+
+            int temp_imm = ~immediate + 1;
+
+            bitset<20> offset(temp_imm);
+            string imm = offset.to_string();
+            // cout << imm << endl;
+            bit20 = imm[0];
+
+            part1 = imm.substr(9, 20);
+            p = imm[8];
+            part2 = imm.substr(1, 7);
+        }
+        else
+        {
+
+            bitset<20> offset(immediate);
+
+            string imm = offset.to_string();
+            // cout << imm << endl;
+            bit20 = imm[0];
+
+            part1 = imm.substr(9, 20);
+            p = imm[8];
+            part2 = imm.substr(1, 7);
+        }
+
+        // cout << "BIT20 " << bit20 << endl;
+        // cout << "PART1 " << part1 << endl;
+        // cout << "P " << p << endl;
+        // cout << "PART2 " << part2 << endl;
+
+        string final = bit20 + part1 + p + part2 + rs1binary + opcode;
+        // cout << final << endl
+        // << final.size() << endl;
+        // cout<<final;
+        return final;
+    }
+    return "";
 }
