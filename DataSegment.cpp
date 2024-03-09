@@ -206,6 +206,7 @@ int data_main(string name)
             ss >> token;
             label = token.substr(0, token.size() - 1); // Remove ':' from token to get label
 
+            //based on the storage capacity mentioned for the label , choose out the below storage types
             if (line.find(".asciiz") != string::npos)
             {
                 processAsciiz(line, data_mp, outputFile); // Pass outputFile object to the function
@@ -237,7 +238,7 @@ int data_main(string name)
         }
     }
 
-    inputFile.close();
+    inputFile.close();  //close the input file
     outputFile.close(); // Close the output file
     return 0;
 }
