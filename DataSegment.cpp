@@ -117,10 +117,7 @@ void processHalf(const string &line, map<string, int> &data_mp, ofstream &output
     string token;
     while (getline(ss, token, ','))
     {
-        // Convert token to integer
         int value = stoi(token);
-
-        // Store value in memory
         outputFile << "0x" << hexa_decimal(data_ptr) << " 0x" << hexa_decimal(value) << endl;
         data_mp[label] = data_ptr;
         data_ptr += 2; // Assuming 2 bytes per half-word
