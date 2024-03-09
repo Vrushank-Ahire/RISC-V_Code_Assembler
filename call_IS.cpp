@@ -5,7 +5,6 @@
 #include <iostream>
 #include "InstructionSet.cpp"
 using namespace std;
-#include "output.mc"
 
 int program_counter;
 
