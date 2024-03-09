@@ -1,20 +1,23 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include"call_IS.cpp"
+#include "call_IS.cpp"
+#include "DataSegment.cpp"
 
 using namespace std;
 
 queue<string> inst;
 int program_temp;
 
-
+int big_flag;
 
 int main()
 {
+    string file_name = "inputDataSeg.asm";
+    big_flag = 0;
     program_temp = 0;
     program_zero();
-    ifstream inputFile("input.asm"); // Open the input file
+    ifstream inputFile(file_name); // Open the input file
     if (!inputFile.is_open())
     {
         cerr << "Failed to open the file." << endl;
@@ -47,19 +50,21 @@ int main()
                     part1 = part1.substr(part1_pos);
                 }
                 string line2;
-                for(int i = 0; i<colon_pos; i++){
-                    
-                    if(line[i] == ' ' || i==colon_pos-1){
-                       if(i == colon_pos - 1 && line[i]!=' '){
-                        line2 += line[i];
-                       }
-                    
+                for (int i = 0; i < colon_pos; i++)
+                {
+
+                    if (line[i] == ' ' || i == colon_pos - 1)
+                    {
+                        if (i == colon_pos - 1 && line[i] != ' ')
+                        {
+                            line2 += line[i];
+                        }
+
                         break;
                     }
                     line2 += line[i];
                 }
-                
-                
+
                 pair<string, int> temp;
                 temp.first = line2;
                 temp.second = program_temp;
@@ -68,7 +73,7 @@ int main()
                 line2 += ':';
 
                 string part2 = line.substr(colon_pos + 1);
-                
+
                 size_t part2_pos = part2.find_first_not_of(" \t");
                 if (part2_pos != string::npos)
                 {
@@ -78,12 +83,12 @@ int main()
                 {
 
                     string instruction;
-                    bool firstSpace = true; 
+                    bool firstSpace = true;
                     for (char c : part2)
                     {
                         if (c == ' ')
                         {
-                            
+
                             if (firstSpace)
                             {
                                 instruction += c;
@@ -95,14 +100,15 @@ int main()
                             instruction += c;
                         }
                     }
-                    if(instruction[0]!=' '){
-                      //  cout<<"Pushed 1"<<instruction<<endl;
-                        program_temp += 4;
-                        inst.push(instruction);
+                    if (instruction[0] != ' ')
+                    {
+                        //  cout<<"Pushed 1"<<instruction<<endl;
+                        if (big_flag == 0)
+                        {
+                            program_temp += 4;
+                            inst.push(instruction);
+                        }
                     }
-                   
-
-
                 }
             }
             else
@@ -129,16 +135,19 @@ int main()
                             instruction += c;
                         }
                     }
-                  //  cout << instruction << endl;
-                    if(instruction[0]!='.'){
-                       // cout<<"Pushed"<<instruction<<endl;
-                        program_temp += 4;
-                        inst.push(instruction);
-                    }      
+                    // cout << instruction << endl;
+                    if (instruction[0] != '.')
+                    {
+                        // cout<<"Pushed"<<instruction<<endl;
+                        if (big_flag == 0)
+                        {
+                            program_temp += 4;
+                            inst.push(instruction);
+                        }
+                    }
                 }
                 else
                 {
-                    
                 }
             }
         }
@@ -146,12 +155,16 @@ int main()
 
     int size = inst.size();
 
-    for(int i = 0; i<size; i++){
+    for (int i = 0; i < size; i++)
+    {
         string k = inst.front();
-        //cout<<"Instruction is"<<k<<endl;
+        // cout<<"Instruction is"<<k<<endl;
         inst.pop();
         final_machinecode(k);
     }
     inputFile.close();
+
+    data_main(file_name);
+
     return 0;
 }
