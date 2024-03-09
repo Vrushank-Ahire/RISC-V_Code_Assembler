@@ -25,10 +25,6 @@ array3: .half 100, 200, 300, 400, 500
 variable3: .word 999
 array4: .word 55, 66, 77, 88, 99
 
-
-
-
-
 .text
 jal label3
 lw x16, 0(x17)
