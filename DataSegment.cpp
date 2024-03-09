@@ -185,7 +185,7 @@ int data_main(string name)
     int flag = 1;
     map<string, int> data_mp;
     ofstream outputFile("outputDataSeg.txt", std::ios::app); // Output file for data segment with addresses
-    outputFile<<"DATA SEGMENT"<<endl;
+    outputFile << "DATA SEGMENT" << endl;
 
     while (getline(inputFile, line))
     {
