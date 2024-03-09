@@ -235,11 +235,12 @@ string InstructionSet::getFormat(string instruction)
     string instruction_name = instruction.substr(0, pos);
 
     auto it = instructionFormats.find(instruction_name);
-    return (it != instructionFormats.end()) ? it->second : "";
+    return (it != instructionFormats.end()) ? it->second : "ERROR";
 }
 
 string InstructionSet::getOpcode(const string &instruction)
 {
+    
     auto it = opcodeMap.find(instruction);
     return (it != opcodeMap.end()) ? it->second : "";
 }
@@ -287,9 +288,20 @@ string RFormatInstruction::generateMachineCode(const string &instructionLine)
     string rs2Name = registers.substr(registers.find(',') + 1);
 
     // Convert register names to their corresponding register numbers
-    int rd = registerMap.at(rdName);
-    int rs1 = registerMap.at(rs1Name);
-    int rs2 = registerMap.at(rs2Name);
+    int rd;
+    int rs1;
+    int rs2;
+    try {
+        rd = registerMap.at(rdName);
+        rs1 = registerMap.at(rs1Name);
+        rs2 = registerMap.at(rs2Name);
+    } catch(const std::out_of_range& e) {
+        cerr << "Error: Invalid Instruction entered." << std::endl;
+        exit(1);
+    }
+
+    
+    
 
     // Convert register numbers to 5-bit binary representation
     string rdBinary = bitset<5>(rd).to_string();
