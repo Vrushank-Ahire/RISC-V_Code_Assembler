@@ -25,6 +25,10 @@ array3: .half 100, 200, 300, 400, 500
 variable3: .word 999
 array4: .word 55, 66, 77, 88, 99
 
+
+
+
+
 .text
 jal label3
 lw x16, 0(x17)
@@ -39,6 +43,10 @@ sw x18, 4(x19)
 lb x20, 8(x21)
 sb x22, 12(x23)
 
+
+
+
+
 .data
 array6: .word 11, 22, 33, 44, 55
 string4: .asciiz "Welcome to RISC-V"
@@ -46,6 +54,8 @@ string4: .asciiz "Welcome to RISC-V"
 .text
 lbu x24, 16(x25)
 sbu x26, 20(x27)
+
+
 
 .data
 array7: .byte 6, 7, 8, 9, 10
@@ -56,9 +66,14 @@ array8: .half 333, 444, 555, 666, 777
 lui x28, 0x1000
 auipc x29, 0x2000
 
+
 .data
 array9: .word 111, 222, 333, 444, 555
 string5: .asciiz "Programming is fun!"
+
+
+
+
 
 .text
 jalr x30, x31, 0
