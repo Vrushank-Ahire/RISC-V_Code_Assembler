@@ -154,10 +154,7 @@ void processDword(const string &line, map<string, int> &data_mp, ofstream &outpu
     string token;
     while (getline(ss, token, ','))
     {
-        // Convert token to integer
         int value = stoi(token);
-
-        // Store value in memory
         outputFile << "0x" << hexa_decimal(data_ptr) << " 0x" << hexa_decimal(value) << endl;
         data_mp[label] = data_ptr;
         data_ptr += 8; // Assuming 8 bytes per double word
