@@ -13,7 +13,7 @@ int big_flag;
 
 int main()
 {
-    string file_name = "inputDataSeg.asm";
+    string file_name = "input.asm";
     big_flag = 0;
     program_temp = 0;
     program_zero();
