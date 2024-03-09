@@ -1,6 +1,6 @@
 #ifndef INSTRUCTION_SET_H
 #define INSTRUCTION_SET_H
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 #include <unordered_map>
 #include <string>
